@@ -1,3 +1,6 @@
+#관련영상 : https://youtu.be/AiPeMBZbvKw
+#관련 블로스 포스팅 : 
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.special import lambertw
@@ -20,8 +23,7 @@ for p in range(n):
 	for q in range(p):
 		x0[p] = powertower(r,x0[p])
 
-fig,ax = plt.subplots(figsize=(10,10), dpi=900)
-
+fig,ax = plt.subplots(figsize=(10,10), dpi=900) #최대한 고해상도로 만들어보고자 'dpi=900'이라는 설정을 시도하였는데, python자체 렌더링 시간도 상당하고, AE에서 작업 할때 그리고 PP에서 렌더링 할 때도 그 속도가 매우 더디다. 파일사이즈는 1~20MB정도 밖에 안되는데 왜 그리 느린지는 모르겠으나, 어쨋든 이 값은 해상도와 작업편의를 모두 고려했을때 너무 과하다고 느낀다. 아직은 경험이 없어 어느정도가 적절할지 잘 모르겠다.
 
 m = 3000
 def animate(i):
@@ -31,7 +33,7 @@ def animate(i):
 	
 	x=(zoom**i)*(x0-k)
 	ax.plot(x.real,x.imag, 'go', ms=10)
-	ax.plot(x.real,x.imag, 'g')
+	ax.plot(x.real,x.imag, 'g') #필자는 점과 선을 따로 rendering하여, 선의 투명도를 조절하였다.
 
 anim = FuncAnimation(fig, animate, frames = m, interval = 50)
 anim.save('ipt spiral zoom animation.mp4')
