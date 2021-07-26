@@ -1,0 +1,39 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.special import lambertw
+from matplotlib.animation import FuncAnimation
+
+def powertower(r, x):
+	return r ** x
+
+n = 700
+zoom = 1.01
+r=1.j
+
+w = -lambertw(-1.j*np.pi*0.5)
+c = np.exp(w)
+
+x0 = r*np.ones(n, dtype=complex)
+k=c*np.ones(n, dtype=complex)
+
+for p in range(n):
+	for q in range(p):
+		x0[p] = powertower(r,x0[p])
+
+fig,ax = plt.subplots(figsize=(10,10), dpi=900)
+
+
+m = 3000
+def animate(i):
+	ax.clear()
+	eps = 0.7
+	plt.axis([-eps, eps, -eps, +eps])
+	
+	x=(zoom**i)*(x0-k)
+	ax.plot(x.real,x.imag, 'go', ms=10)
+	ax.plot(x.real,x.imag, 'g')
+
+anim = FuncAnimation(fig, animate, frames = m, interval = 50)
+anim.save('ipt spiral zoom animation.mp4')
+
+plt.show()
