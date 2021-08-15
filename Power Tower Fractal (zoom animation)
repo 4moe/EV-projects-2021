@@ -1,0 +1,48 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy import newaxis
+
+#initial plot range - (px,py) : center of range, eps : horizontal/vertical range
+px=0
+py=0
+eps=1E-13
+
+#(qx,qy) : zoom center
+qx=-0.43137999995
+qy=0.895038
+
+m=0.9 #zoom factor
+n=284 #how many frames
+
+def compute_powertower(height, threshold, nx, ny, px, py, k):
+    # A grid of c-values
+    x = np.linspace(px-2*(m**k), px+2*(m**k), nx)
+    y = np.linspace(py-2*(m**k), py+2*(m**k), ny)
+    c = x[:,newaxis] + 1j*y[newaxis,:]
+
+    # powertower iteration
+    z = c
+
+    # The code below overflows in many regions of the x-y grid, suppress
+    # warnings temporarily
+    with np.warnings.catch_warnings():
+        np.warnings.simplefilter("ignore")
+        for j in range(height):
+            z = c**z
+        powertower_set = (abs(z) < threshold)
+
+    return powertower_set
+
+
+for p in range(n+1):
+    powertower_set = compute_powertower(600, 100, 3000, 3000, px, py, p)
+    
+    plt.imshow(powertower_set.T, extent=[px-2*(m**p), px+2*(m**p), py-2*(m**p), py+2*(m**p)])
+    plt.gray()
+    plt.savefig(f'PTF({p+1}).png', dpi=1000) #Set dpi level depending on fineness of grid
+    
+    #to change center point
+    px=px+(1-m)*(qx-px)
+    py=py+(1-m)*(qy-py)
+
+#default setup requires rendering time over 30hours (at MacBook Pro 15inch 2018 model)
