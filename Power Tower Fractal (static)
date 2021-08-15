@@ -1,0 +1,36 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy import newaxis
+
+#plot range setting - (px,py) : center of range, eps : horizontal/vertical range
+px=0
+py=0
+eps=4
+
+def compute_powertower(height, threshold, nx, ny):
+    # A grid of c-values
+    x = np.linspace(px-eps, px+eps, nx)
+    y = np.linspace(py-eps,py+eps, ny)
+
+    c = x[:,newaxis] + 1j*y[newaxis,:]
+
+    # powertower iteration
+
+    z = c
+
+    # The code below overflows in many regions of the x-y grid, suppress
+    # warnings temporarily
+    with np.warnings.catch_warnings():
+        np.warnings.simplefilter("ignore")
+        for j in range(height):
+            z = c**z
+        powertower_set = (abs(z) < threshold)
+
+    return powertower_set
+
+powertower_set = compute_powertower(200, 100, 500, 500)
+
+plt.imshow(powertower_set.T, extent=[px-eps, px+eps, py-eps,py+eps])
+plt.gray()
+plt.savefig('name.png', dpi=300) #Set dpi level depending on fineness of grid
+plt.show()
