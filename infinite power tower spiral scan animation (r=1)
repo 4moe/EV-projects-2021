@@ -1,0 +1,33 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+
+#recurssion relation of the power tower
+def powertower(r, x):
+	return r ** x
+
+n=3000 #height of the power tower
+m=100 #increment of angle
+
+fig,ax = plt.subplots(figsize=(5,5))
+
+def animate(i):
+	ax.clear()
+	plt.axis([-2,2,-2,2])
+	t=(np.pi/m)*i #angle
+	r=np.exp(1.j*t) #base of the power tower
+	x0 = r*np.ones(n, dtype=complex)
+
+    #calculate power tower from height of 1 to n
+	for p in range(n):
+		for q in range(p):
+			x0[p] = powertower(r,x0[p])
+
+	ax.plot(x0.real,x0.imag, 'go', ms=1)
+	ax.plot(x0.real,x0.imag, 'g', linewidth=0.5)
+	ax.plot(x0[0].real,x0[0].imag, 'ko', ms=3)
+	
+anim = FuncAnimation(fig, animate, frames=m+1, interval=100)
+anim.save('name.gif')
+
+plt.show()
